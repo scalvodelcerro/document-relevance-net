@@ -11,7 +11,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 3},
         {"bbb", 4}
-      }, 7)
+      })
     }
 
     Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
@@ -27,15 +27,15 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {repeatedTerm, 3},
         {"bbb", 4}
-      }, 7),
+      }),
       New DocumentSummary("doc2", New Dictionary(Of String, Integer)() From {
         {repeatedTerm, 3},
         {"bbb", 4}
-      }, 7),
+      }),
       New DocumentSummary("doc3", New Dictionary(Of String, Integer)() From {
         {repeatedTerm, 3},
         {"bbb", 4}
-      }, 7)
+      })
     }
 
     Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
@@ -52,11 +52,11 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 3},
         {"bbb", 4}
-      }, 7),
+      }),
       New DocumentSummary("doc2", New Dictionary(Of String, Integer)() From {
         {"ccc", 3},
         {"bbb", 4}
-      }, 7)
+      })
     }
 
     Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
@@ -72,11 +72,11 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 3},
         {"ccc", 4}
-      }, 7),
+      }),
       New DocumentSummary("doc2", New Dictionary(Of String, Integer)() From {
         {"bbb", 3},
         {"ccc", 4}
-      }, 7)
+      })
     }
 
     Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
@@ -91,11 +91,11 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 5},
         {"ccc", 4}
-      }, 7),
+      }),
       New DocumentSummary("doc2", New Dictionary(Of String, Integer)() From {
         {"bbb", 3},
         {"ccc", 4}
-      }, 7)
+      })
     }
 
     Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
@@ -110,15 +110,15 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 3},
         {"ccc", 4}
-      }, 7),
+      }),
       New DocumentSummary("doc2", New Dictionary(Of String, Integer)() From {
         {"bbb", 3},
         {"ccc", 4}
-      }, 7),
+      }),
       New DocumentSummary("doc3", New Dictionary(Of String, Integer)() From {
         {"bbb", 3},
         {"ccc", 4}
-      }, 7)
+      })
     }
 
     Dim result = tested.CalculateDocumentsRelevance(documentSummaries)

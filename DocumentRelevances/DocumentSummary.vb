@@ -8,16 +8,18 @@ Public Class DocumentSummary
   ''' </summary>
   ''' <param name="documentName">Name of the document</param>
   ''' <param name="termCounts">Map relating a term with its frequency</param>
-  ''' <param name="wordCount">Total number of words in the document</param>
-  Public Sub New(documentName As String, termCounts As Dictionary(Of String, Integer), wordCount As Long)
+  Public Sub New(documentName As String, termCounts As Dictionary(Of String, Integer))
     Me.DocumentName = documentName
     Me.TermCounts = termCounts
-    Me.WordCount = wordCount
   End Sub
 
   Public ReadOnly Property DocumentName As String
   Public ReadOnly Property TermCounts As Dictionary(Of String, Integer)
   Public ReadOnly Property WordCount As Long
+    Get
+      Return TermCounts.Values.Sum()
+    End Get
+  End Property
 
   ''' <summary>
   ''' Checks if a term appears in the document

@@ -95,14 +95,13 @@ Public Class DocumentRelevanceCalculator
     WaitReady(documentPath)
     Dim documentName = Path.GetFileName(documentPath)
 
-    Dim words As IEnumerable(Of String) = File.ReadLines(documentPath).SelectMany(Function(line) line.Split())
-    Dim wordCount = words.Count()
+    Dim termCounts As Dictionary(Of String, Integer) =
+      File.ReadLines(documentPath).
+        SelectMany(Function(line) line.Split()).
+        GroupBy(Function(word) word).
+        ToDictionary(Function(g) g.Key, Function(g) g.Count())
 
-    Dim termCounts As Dictionary(Of String, Integer) = words.
-      GroupBy(Function(word) word).
-      ToDictionary(Function(g) g.Key, Function(g) g.Count())
-
-    Return New DocumentSummary(documentName, termCounts, wordCount)
+    Return New DocumentSummary(documentName, termCounts)
   End Function
 
 #Region "IDisposable Support"
