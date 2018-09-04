@@ -36,7 +36,8 @@ Public Class DocumentRelevanceCalculator
   Public Sub StartWatchingDirectory(directoryPath As String)
     ReadExistingFiles(directoryPath)
     Watcher = New FileSystemWatcher(directoryPath) With {
-      .EnableRaisingEvents = True
+      .EnableRaisingEvents = True,
+      .IncludeSubdirectories = False
     }
   End Sub
 
