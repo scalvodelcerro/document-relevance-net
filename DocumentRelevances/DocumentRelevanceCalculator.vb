@@ -79,6 +79,14 @@ Public Class DocumentRelevanceCalculator
     RaiseEvent DocumentRelevanceChanged()
   End Sub
 
+  Private Sub OnDocumentChange(sender As Object, e As FileSystemEventArgs) Handles Watcher.Changed
+    documentSummaries = documentSummaries.Where(Function(x) x.DocumentName <> e.Name).ToList()
+    Dim documentSummary = CreateSummary(e.FullPath)
+    documentSummaries.Add(documentSummary)
+    documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
+    RaiseEvent DocumentRelevanceChanged()
+  End Sub
+
   Private Function CreateSummary(documentPath As String) As DocumentSummary
     WaitReady(documentPath)
     Dim documentName = Path.GetFileName(documentPath)
