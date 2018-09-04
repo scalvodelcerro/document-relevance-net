@@ -51,6 +51,7 @@ Public Class DocumentRelevanceCalculator
       OrderByDescending(Function(x) x.Value).
       Take(limit).
       Select(Function(x) New With {.DocumentName = x.Key, .Relevance = x.Value})
+
       Console.WriteLine("Document: {0}, relevance: {1}", documentRelevance.DocumentName, documentRelevance.Relevance)
     Next
     Console.WriteLine("--------------------------------------------------")
@@ -59,10 +60,7 @@ Public Class DocumentRelevanceCalculator
 
   Private Sub ReadExistingFiles(directoryPath As String)
     Directory.EnumerateFiles(directoryPath).AsParallel().
-      ForAll(Sub(documentPath)
-               Dim documentSummary = CreateSummary(documentPath)
-               documentSummaries.Add(documentSummary)
-             End Sub)
+      ForAll(Sub(documentPath) documentSummaries.Add(CreateSummary(documentPath)))
     UpdateDocumentRelevances()
   End Sub
 
@@ -72,8 +70,7 @@ Public Class DocumentRelevanceCalculator
   End Sub
 
   Private Sub OnDocumentCreate(sender As Object, e As FileSystemEventArgs) Handles Watcher.Created
-    Dim documentSummary = CreateSummary(e.FullPath)
-    documentSummaries.Add(documentSummary)
+    documentSummaries.Add(CreateSummary(e.FullPath))
     UpdateDocumentRelevances()
   End Sub
 
@@ -84,15 +81,13 @@ Public Class DocumentRelevanceCalculator
 
   Private Sub OnDocumentChange(sender As Object, e As FileSystemEventArgs) Handles Watcher.Changed
     documentSummaries = documentSummaries.Where(Function(x) x.DocumentName <> e.Name).ToList()
-    Dim documentSummary = CreateSummary(e.FullPath)
-    documentSummaries.Add(documentSummary)
+    documentSummaries.Add(CreateSummary(e.FullPath))
     UpdateDocumentRelevances()
   End Sub
 
   Private Sub OnDocumentRename(sender As Object, e As RenamedEventArgs) Handles Watcher.Renamed
     documentSummaries = documentSummaries.Where(Function(x) x.DocumentName <> e.OldName).ToList()
-    Dim documentSummary = CreateSummary(e.FullPath)
-    documentSummaries.Add(documentSummary)
+    documentSummaries.Add(CreateSummary(e.FullPath))
     UpdateDocumentRelevances()
   End Sub
 
@@ -104,8 +99,8 @@ Public Class DocumentRelevanceCalculator
     Dim wordCount = words.Count()
 
     Dim termCounts As Dictionary(Of String, Integer) = words.
-  GroupBy(Function(word) word).
-  ToDictionary(Function(g) g.Key, Function(g) g.Count())
+      GroupBy(Function(word) word).
+      ToDictionary(Function(g) g.Key, Function(g) g.Count())
 
     Return New DocumentSummary(documentName, termCounts, wordCount)
   End Function
