@@ -35,7 +35,9 @@ Public Class DocumentRelevanceCalculator
   ''' <param name="directoryPath">Full path to the directory</param>
   Public Sub StartWatchingDirectory(directoryPath As String)
     ReadExistingFiles(directoryPath)
-    Watcher = New FileSystemWatcher(directoryPath)
+    Watcher = New FileSystemWatcher(directoryPath) With {
+      .EnableRaisingEvents = True
+    }
   End Sub
 
   ''' <summary>
