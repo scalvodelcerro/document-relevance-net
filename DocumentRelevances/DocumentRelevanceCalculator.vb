@@ -47,12 +47,18 @@ Public Class DocumentRelevanceCalculator
   ''' <param name="limit">Number of most relevant documents to prinf</param>
   Public Sub PrintMostRelevantDocuments(limit As Integer)
     Console.WriteLine("--------------------------------------------------")
+    Console.WriteLine("Documents processed: {0}", documentRelevances.Count)
+    Console.WriteLine("  Showing top {0} most relevant documents", limit)
+    Console.WriteLine("--------------------------------------------------")
     For Each documentRelevance In documentRelevances.
       OrderByDescending(Function(x) x.Value).
       Take(limit).
-      Select(Function(x) New With {.DocumentName = x.Key, .Relevance = x.Value})
+      Select(Function(x, index) New With {.DocumentName = x.Key, .Relevance = x.Value, .RelevanceNumber = index + 1})
 
-      Console.WriteLine("Document: {0}, relevance: {1}", documentRelevance.DocumentName, documentRelevance.Relevance)
+      Console.WriteLine("{0}-document: {1}, relevance: {2}",
+                        documentRelevance.RelevanceNumber,
+                        documentRelevance.DocumentName,
+                        documentRelevance.Relevance)
     Next
     Console.WriteLine("--------------------------------------------------")
     Console.WriteLine()
