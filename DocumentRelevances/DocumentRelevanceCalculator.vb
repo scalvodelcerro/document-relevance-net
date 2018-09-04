@@ -98,7 +98,7 @@ Public Class DocumentRelevanceCalculator
     Dim termCounts As Dictionary(Of String, Integer) =
       File.ReadLines(documentPath).
         SelectMany(Function(line) line.Split()).
-        GroupBy(Function(word) word).
+        GroupBy(Function(word) word.ToLower()).
         ToDictionary(Function(g) g.Key, Function(g) g.Count())
 
     Return New DocumentSummary(documentName, termCounts)

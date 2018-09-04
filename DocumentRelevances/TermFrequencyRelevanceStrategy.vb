@@ -10,7 +10,7 @@ Public Class TermFrequencyRelevanceStrategy
   ''' </summary>
   ''' <param name="terms">Collection of terms of importance</param>
   Public Sub New(terms As IEnumerable(Of String))
-    Me.terms = terms
+    Me.terms = terms.Select(Function(term) term.ToLower()).Distinct().ToList()
   End Sub
 
   Public Overrides Function CalculateDocumentsRelevance(documentSummaries As List(Of DocumentSummary)) As Dictionary(Of String, Double)
