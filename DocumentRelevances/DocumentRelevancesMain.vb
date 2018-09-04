@@ -2,7 +2,8 @@
 Imports DocumentRelevances
 
 Module DocumentRelevancesMain
-  Private calculator As DocumentRelevanceCalculator
+  Private WithEvents Calculator As DocumentRelevanceCalculator
+  Private resultsLimit
 
   Class Options
     <[Option]("d"c, "directory", Required:=True, HelpText:="Directory containing the documents that will be processed")>
@@ -21,13 +22,18 @@ Module DocumentRelevancesMain
       Dim line As String = Console.ReadLine()
       If line.ToUpper().Equals("EXIT") Then exitProgram = True
     Loop
-    calculator.Dispose()
+    Calculator.Dispose()
   End Sub
 
   Private Sub RunProgram(o As Options)
-    calculator = New DocumentRelevanceCalculator(o)
-    calculator.ReadExistingFiles()
-    calculator.PrintDocumentRelevances()
-    calculator.StartWatchingDirectoryChanges()
+    resultsLimit = o.ResultsLimit
+    Calculator = New DocumentRelevanceCalculator() With {
+      .Strategy = New TfIdfRelevanceStrategy(o.Terms)
+    }
+    Calculator.StartWatchingDirectory(o.Directory)
+  End Sub
+
+  Private Sub OnDocumentRelevanceChange() Handles Calculator.DocumentRelevanceChanged
+    Calculator.PrintMostRelevantDocuments(resultsLimit)
   End Sub
 End Module

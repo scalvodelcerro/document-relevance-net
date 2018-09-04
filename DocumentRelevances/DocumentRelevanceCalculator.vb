@@ -1,37 +1,41 @@
 ﻿Imports System.IO
+Imports DocumentRelevances
 
 Friend Class DocumentRelevanceCalculator
   Implements IDisposable
-  Private options As Options
+  Public Property Strategy As DocumentRelevanceCalculatorStrategy
+  Public Event DocumentRelevanceChanged()
+
   Private documentSummaries As List(Of DocumentSummary)
   Private documentRelevances As Dictionary(Of String, Double)
   Private watcher As FileSystemWatcher
 
-  Public Sub New(options As Options)
-    Me.options = options
+  Public Sub New()
     Me.documentSummaries = New List(Of DocumentSummary)()
   End Sub
 
-  Public Sub ReadExistingFiles()
-    Directory.EnumerateFiles(options.Directory).AsParallel().
+  Public Sub ReadExistingFiles(directoryPath As String)
+    Directory.EnumerateFiles(directoryPath).AsParallel().
       ForAll(Sub(documentPath)
                Dim documentSummary = CreateSummary(documentPath)
                documentSummaries.Add(documentSummary)
              End Sub)
-    CalculateDocumentRelevance()
+    documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
+    RaiseEvent DocumentRelevanceChanged()
   End Sub
 
-  Public Sub StartWatchingDirectoryChanges()
-    watcher = New FileSystemWatcher(options.Directory)
+  Public Sub StartWatchingDirectory(directoryPath As String)
+    ReadExistingFiles(directoryPath)
+    watcher = New FileSystemWatcher(directoryPath)
     AddHandler watcher.Created, AddressOf OnDocumentCreate
     watcher.EnableRaisingEvents = True
   End Sub
 
-  Public Sub PrintDocumentRelevances()
+  Public Sub PrintMostRelevantDocuments(limit As Integer)
     Console.WriteLine("--------------------------------------------------")
     For Each documentRelevance In documentRelevances.
       OrderByDescending(Function(x) x.Value).
-      Take(options.ResultsLimit).
+      Take(limit).
       Select(Function(x) New With {.DocumentName = x.Key, .Relevance = x.Value})
       Console.WriteLine("Document: {0}, relevance: {1}", documentRelevance.DocumentName, documentRelevance.Relevance)
     Next
@@ -42,8 +46,8 @@ Friend Class DocumentRelevanceCalculator
   Private Sub OnDocumentCreate(sender As Object, e As FileSystemEventArgs)
     Dim documentSummary = CreateSummary(e.FullPath)
     documentSummaries.Add(documentSummary)
-    CalculateDocumentRelevance()
-    PrintDocumentRelevances()
+    documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
+    RaiseEvent DocumentRelevanceChanged()
   End Sub
 
   Private Function CreateSummary(documentPath As String) As DocumentSummary
@@ -54,34 +58,10 @@ Friend Class DocumentRelevanceCalculator
     Dim wordCount = words.Count()
 
     Dim termCounts As Dictionary(Of String, Integer) = words.
-  Where(Function(word) options.Terms.Contains(word)).
   GroupBy(Function(word) word).
   ToDictionary(Function(g) g.Key, Function(g) g.Count())
 
     Return New DocumentSummary(documentName, termCounts, wordCount)
-  End Function
-
-  Private Sub CalculateDocumentRelevance()
-    documentRelevances = documentSummaries.ToDictionary(Function(documentSummary) documentSummary.DocumentName, Function(documentSummary) 0.0)
-    For Each term As String In options.Terms
-      Dim idf As Double = CalculateIdfForTerm(term)
-      CType(documentSummaries.AsParallel(), ParallelQuery(Of DocumentSummary)).
-            ForAll(Sub(documentSummary)
-                     Dim tf As Double = CalculateTfForTermInDocument(term, documentSummary)
-                     Dim tfIdf = tf * idf
-                     documentRelevances(documentSummary.DocumentName) += tfIdf
-                   End Sub)
-    Next
-  End Sub
-
-  Private Shared Function CalculateTfForTermInDocument(term As String, documentSummary As DocumentSummary) As Double
-    Return documentSummary.GetFrequencyForTerm(term) / documentSummary.WordCount
-  End Function
-
-  Private Function CalculateIdfForTerm(term As String) As Double
-    Dim documentCount = documentSummaries.Count
-    Dim documentsContainingTerm = documentSummaries.Where(Function(document) document.ContainsTerm(term)).Count()
-    Return Math.Log(documentCount / documentsContainingTerm)
   End Function
 
 #Region "IDisposable Support"

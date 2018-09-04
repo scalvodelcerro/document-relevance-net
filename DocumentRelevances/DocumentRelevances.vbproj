@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentRelevanceCalculator.vb" />
+    <Compile Include="DocumentRelevanceCalculatorStrategy.vb" />
     <Compile Include="DocumentRelevancesMain.vb" />
     <Compile Include="DocumentSummary.vb" />
     <Compile Include="FileUtils.vb" />
@@ -98,6 +99,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="TfIdfRelevanceStrategy.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
