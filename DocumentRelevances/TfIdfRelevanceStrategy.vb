@@ -16,7 +16,7 @@ Public Class TfIdfRelevanceStrategy
     Me.terms = terms
   End Sub
 
-  Public Overrides Function CalculateDocumentRelevance(documentSummaries As List(Of DocumentSummary)) As Dictionary(Of String, Double)
+  Public Overrides Function CalculateDocumentsRelevance(documentSummaries As List(Of DocumentSummary)) As Dictionary(Of String, Double)
     Dim documentRelevances = documentSummaries.ToDictionary(Function(documentSummary) documentSummary.DocumentName, Function(documentSummary) 0.0)
     For Each term As String In terms
       Dim idf As Double = CalculateIdfForTerm(term, documentSummaries)

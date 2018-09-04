@@ -8,5 +8,5 @@ Public MustInherit Class DocumentRelevanceCalculatorStrategy
   ''' </summary>
   ''' <param name="documentSummaries">Collection of document summaries</param>
   ''' <returns>A map relating file name with its relevance</returns>
-  Public MustOverride Function CalculateDocumentRelevance(documentSummaries As List(Of DocumentSummary)) As Dictionary(Of String, Double)
+  Public MustOverride Function CalculateDocumentsRelevance(documentSummaries As List(Of DocumentSummary)) As Dictionary(Of String, Double)
 End Class

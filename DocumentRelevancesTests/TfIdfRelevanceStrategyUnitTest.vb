@@ -17,7 +17,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       }, 7)
     }
 
-    Dim result = tested.CalculateDocumentRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
 
     Assert.AreEqual(0.0, result("doc1"))
   End Sub
@@ -41,7 +41,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       }, 7)
     }
 
-    Dim result = tested.CalculateDocumentRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
 
     Assert.AreEqual(0.0, result("doc1"))
     Assert.AreEqual(0.0, result("doc2"))
@@ -62,7 +62,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       }, 7)
     }
 
-    Dim result = tested.CalculateDocumentRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
 
     Assert.AreNotEqual(0.0, result("doc1"))
     Assert.AreEqual(0.0, result("doc2"))
@@ -82,7 +82,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       }, 7)
     }
 
-    Dim result = tested.CalculateDocumentRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
 
     Assert.IsTrue(result("doc1") = result("doc2"))
   End Sub
@@ -101,7 +101,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       }, 7)
     }
 
-    Dim result = tested.CalculateDocumentRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
 
     Assert.IsTrue(result("doc1") > result("doc2"))
   End Sub
@@ -124,7 +124,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       }, 7)
     }
 
-    Dim result = tested.CalculateDocumentRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
 
     Assert.IsTrue(result("doc1") > result("doc2"))
     Assert.IsTrue(result("doc1") > result("doc3"))

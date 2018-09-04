@@ -65,7 +65,7 @@ Public Class DocumentRelevanceCalculator
   End Sub
 
   Private Sub UpdateDocumentRelevances()
-    documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
+    documentRelevances = Strategy.CalculateDocumentsRelevance(documentSummaries)
     RaiseEvent DocumentRelevanceChanged()
   End Sub
 
