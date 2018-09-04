@@ -77,6 +77,7 @@
     <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TermFrequencyRelevanceStrategyUnitTest.vb" />
     <Compile Include="TfIdfRelevanceStrategyUnitTest.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
