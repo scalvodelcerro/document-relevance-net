@@ -12,21 +12,41 @@ Friend Class DocumentRelevanceCalculator
     Me.documentSummaries = New List(Of DocumentSummary)()
   End Sub
 
+  Public Sub ReadExistingFiles()
+    Directory.EnumerateFiles(options.Directory).AsParallel().
+      ForAll(Sub(documentPath)
+               Dim documentSummary = CreateSummary(documentPath)
+               documentSummaries.Add(documentSummary)
+             End Sub)
+    CalculateDocumentRelevance()
+  End Sub
+
   Public Sub StartWatchingDirectoryChanges()
     watcher = New FileSystemWatcher(options.Directory)
     AddHandler watcher.Created, AddressOf OnDocumentCreate
     watcher.EnableRaisingEvents = True
   End Sub
 
+  Public Sub PrintDocumentRelevances()
+    Console.WriteLine("--------------------------------------------------")
+    For Each documentRelevance In documentRelevances.
+      OrderByDescending(Function(x) x.Value).
+      Take(options.ResultsLimit).
+      Select(Function(x) New With {.DocumentName = x.Key, .Relevance = x.Value})
+      Console.WriteLine("Document: {0}, relevance: {1}", documentRelevance.DocumentName, documentRelevance.Relevance)
+    Next
+    Console.WriteLine("--------------------------------------------------")
+    Console.WriteLine()
+  End Sub
+
   Private Sub OnDocumentCreate(sender As Object, e As FileSystemEventArgs)
-    Dim documentSummary = CreateSummary(e.FullPath, options.Terms)
+    Dim documentSummary = CreateSummary(e.FullPath)
     documentSummaries.Add(documentSummary)
     CalculateDocumentRelevance()
     PrintDocumentRelevances()
   End Sub
 
-
-  Private Function CreateSummary(documentPath As String, terms As IEnumerable(Of String)) As DocumentSummary
+  Private Function CreateSummary(documentPath As String) As DocumentSummary
     WaitReady(documentPath)
     Dim documentName = Path.GetFileName(documentPath)
 
@@ -34,9 +54,9 @@ Friend Class DocumentRelevanceCalculator
     Dim wordCount = words.Count()
 
     Dim termCounts As Dictionary(Of String, Integer) = words.
-      Where(Function(word) terms.Contains(word)).
-      GroupBy(Function(word) word).
-      ToDictionary(Function(g) g.Key, Function(g) g.Count())
+  Where(Function(word) options.Terms.Contains(word)).
+  GroupBy(Function(word) word).
+  ToDictionary(Function(g) g.Key, Function(g) g.Count())
 
     Return New DocumentSummary(documentName, termCounts, wordCount)
   End Function
@@ -54,17 +74,6 @@ Friend Class DocumentRelevanceCalculator
     Next
   End Sub
 
-  Private Sub PrintDocumentRelevances()
-    Console.WriteLine("--------------------------------------------------")
-    For Each documentRelevance In documentRelevances.
-      OrderBy(Function(x) x.Value).
-      Take(options.ResultsLimit).
-      Select(Function(x) New With {.DocumentName = x.Key, .Relevance = x.Value})
-      Console.WriteLine("Document: {0}, relevance: {1}", documentRelevance.DocumentName, documentRelevance.Relevance)
-    Next
-    Console.WriteLine("--------------------------------------------------")
-    Console.WriteLine()
-  End Sub
   Private Shared Function CalculateTfForTermInDocument(term As String, documentSummary As DocumentSummary) As Double
     Return documentSummary.GetFrequencyForTerm(term) / documentSummary.WordCount
   End Function

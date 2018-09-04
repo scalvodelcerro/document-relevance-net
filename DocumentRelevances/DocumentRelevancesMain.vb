@@ -26,6 +26,8 @@ Module DocumentRelevancesMain
 
   Private Sub RunProgram(o As Options)
     calculator = New DocumentRelevanceCalculator(o)
+    calculator.ReadExistingFiles()
+    calculator.PrintDocumentRelevances()
     calculator.StartWatchingDirectoryChanges()
   End Sub
 End Module
