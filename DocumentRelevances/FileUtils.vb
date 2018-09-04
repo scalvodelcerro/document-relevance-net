@@ -29,7 +29,7 @@ Public Module FileUtils
         Trace.WriteLine(String.Format("Output file {0} not yet ready ({1})", filePath, ex.Message))
       End Try
       tries += 1
-      Thread.Sleep(500)
+      Thread.Sleep(200)
     End While
   End Sub
 End Module
