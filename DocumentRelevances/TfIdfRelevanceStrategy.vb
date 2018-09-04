@@ -1,9 +1,17 @@
 ﻿Imports DocumentRelevances
 
+''' <summary>
+''' Calculates the relevance of documents using tf-idf(term frequency-inverse document frequency) method.
+''' Useful to give less importance to terms that appear in most documents, as they are less relevant.
+''' </summary>
 Public Class TfIdfRelevanceStrategy
   Inherits DocumentRelevanceCalculatorStrategy
   Private terms As IEnumerable(Of String)
 
+  ''' <summary>
+  ''' Constructor
+  ''' </summary>
+  ''' <param name="terms">Collection of terms of importance</param>
   Public Sub New(terms As IEnumerable(Of String))
     Me.terms = terms
   End Sub
