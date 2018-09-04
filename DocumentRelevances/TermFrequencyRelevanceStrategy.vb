@@ -3,8 +3,12 @@
 Public Class TermFrequencyRelevanceStrategy
   Inherits DocumentRelevanceCalculatorStrategy
 
-  Private terms As IEnumerable(Of String)
+  Protected terms As IEnumerable(Of String)
 
+  ''' <summary>
+  ''' Constructor
+  ''' </summary>
+  ''' <param name="terms">Collection of terms of importance</param>
   Public Sub New(terms As IEnumerable(Of String))
     Me.terms = terms
   End Sub
@@ -21,6 +25,12 @@ Public Class TermFrequencyRelevanceStrategy
     Return documentRelevances
   End Function
 
+  ''' <summary>
+  ''' Calculates the frequency of a term in a document, proportional to the document size
+  ''' </summary>
+  ''' <param name="term">The term to search</param>
+  ''' <param name="documentSummary">The document summary where the term is searcheds</param>
+  ''' <returns>The relative frequency of the term</returns>
   Protected Function CalculateTfForTermInDocument(term As String, documentSummary As DocumentSummary) As Double
     Return documentSummary.GetFrequencyForTerm(term) / documentSummary.WordCount
   End Function

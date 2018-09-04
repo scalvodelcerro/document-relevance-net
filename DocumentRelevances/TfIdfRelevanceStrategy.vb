@@ -5,15 +5,14 @@
 ''' Useful to give less importance to terms that appear in most documents, as they are less relevant.
 ''' </summary>
 Public Class TfIdfRelevanceStrategy
-  Inherits DocumentRelevanceCalculatorStrategy
-  Private terms As IEnumerable(Of String)
+  Inherits TermFrequencyRelevanceStrategy
 
   ''' <summary>
   ''' Constructor
   ''' </summary>
   ''' <param name="terms">Collection of terms of importance</param>
   Public Sub New(terms As IEnumerable(Of String))
-    Me.terms = terms
+    MyBase.New(terms)
   End Sub
 
   Public Overrides Function CalculateDocumentsRelevance(documentSummaries As List(Of DocumentSummary)) As Dictionary(Of String, Double)
@@ -30,11 +29,14 @@ Public Class TfIdfRelevanceStrategy
     Return documentRelevances
   End Function
 
-  Private Function CalculateTfForTermInDocument(term As String, documentSummary As DocumentSummary) As Double
-    Return documentSummary.GetFrequencyForTerm(term) / documentSummary.WordCount
-  End Function
-
-  Private Function CalculateIdfForTerm(term As String, documentSummaries As List(Of DocumentSummary)) As Double
+  ''' <summary>
+  ''' Calculates the relevance of a term in a set of documents.
+  ''' A term will be less relevant if it appears in the majority of the documents.
+  ''' </summary>
+  ''' <param name="term">The term</param>
+  ''' <param name="documentSummaries">Collection of documents</param>
+  ''' <returns>The inverse document frequency for the term</returns>
+  Protected Function CalculateIdfForTerm(term As String, documentSummaries As List(Of DocumentSummary)) As Double
     Dim documentCount = documentSummaries.Count
     Dim documentsContainingTerm = documentSummaries.Where(Function(document) document.ContainsTerm(term)).Count()
     Return Math.Log(documentCount / documentsContainingTerm)
