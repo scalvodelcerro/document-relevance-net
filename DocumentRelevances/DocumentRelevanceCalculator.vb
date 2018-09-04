@@ -1,14 +1,13 @@
 ﻿Imports System.IO
-Imports DocumentRelevances
 
-Friend Class DocumentRelevanceCalculator
+Public Class DocumentRelevanceCalculator
   Implements IDisposable
   Public Property Strategy As DocumentRelevanceCalculatorStrategy
   Public Event DocumentRelevanceChanged()
 
+  Private WithEvents Watcher As FileSystemWatcher
   Private documentSummaries As List(Of DocumentSummary)
   Private documentRelevances As Dictionary(Of String, Double)
-  Private watcher As FileSystemWatcher
 
   Public Sub New()
     Me.documentSummaries = New List(Of DocumentSummary)()
@@ -26,9 +25,7 @@ Friend Class DocumentRelevanceCalculator
 
   Public Sub StartWatchingDirectory(directoryPath As String)
     ReadExistingFiles(directoryPath)
-    watcher = New FileSystemWatcher(directoryPath)
-    AddHandler watcher.Created, AddressOf OnDocumentCreate
-    watcher.EnableRaisingEvents = True
+    Watcher = New FileSystemWatcher(directoryPath)
   End Sub
 
   Public Sub PrintMostRelevantDocuments(limit As Integer)
@@ -43,7 +40,7 @@ Friend Class DocumentRelevanceCalculator
     Console.WriteLine()
   End Sub
 
-  Private Sub OnDocumentCreate(sender As Object, e As FileSystemEventArgs)
+  Private Sub OnDocumentCreate(sender As Object, e As FileSystemEventArgs) Handles Watcher.Created
     Dim documentSummary = CreateSummary(e.FullPath)
     documentSummaries.Add(documentSummary)
     documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
@@ -70,7 +67,7 @@ Friend Class DocumentRelevanceCalculator
   Protected Overridable Sub Dispose(disposing As Boolean)
     If Not disposedValue Then
       If disposing Then
-        watcher.Dispose()
+        Watcher.Dispose()
       End If
     End If
     disposedValue = True
