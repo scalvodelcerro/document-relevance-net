@@ -63,6 +63,10 @@ Public Class DocumentRelevanceCalculator
                Dim documentSummary = CreateSummary(documentPath)
                documentSummaries.Add(documentSummary)
              End Sub)
+    UpdateDocumentRelevances()
+  End Sub
+
+  Private Sub UpdateDocumentRelevances()
     documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
     RaiseEvent DocumentRelevanceChanged()
   End Sub
@@ -70,30 +74,26 @@ Public Class DocumentRelevanceCalculator
   Private Sub OnDocumentCreate(sender As Object, e As FileSystemEventArgs) Handles Watcher.Created
     Dim documentSummary = CreateSummary(e.FullPath)
     documentSummaries.Add(documentSummary)
-    documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
-    RaiseEvent DocumentRelevanceChanged()
+    UpdateDocumentRelevances()
   End Sub
 
   Private Sub OnDocumentDelete(sender As Object, e As FileSystemEventArgs) Handles Watcher.Deleted
     documentSummaries = documentSummaries.Where(Function(x) x.DocumentName <> e.Name).ToList()
-    documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
-    RaiseEvent DocumentRelevanceChanged()
+    UpdateDocumentRelevances()
   End Sub
 
   Private Sub OnDocumentChange(sender As Object, e As FileSystemEventArgs) Handles Watcher.Changed
     documentSummaries = documentSummaries.Where(Function(x) x.DocumentName <> e.Name).ToList()
     Dim documentSummary = CreateSummary(e.FullPath)
     documentSummaries.Add(documentSummary)
-    documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
-    RaiseEvent DocumentRelevanceChanged()
+    UpdateDocumentRelevances()
   End Sub
 
   Private Sub OnDocumentRename(sender As Object, e As RenamedEventArgs) Handles Watcher.Renamed
     documentSummaries = documentSummaries.Where(Function(x) x.DocumentName <> e.OldName).ToList()
     Dim documentSummary = CreateSummary(e.FullPath)
     documentSummaries.Add(documentSummary)
-    documentRelevances = Strategy.CalculateDocumentRelevance(documentSummaries)
-    RaiseEvent DocumentRelevanceChanged()
+    UpdateDocumentRelevances()
   End Sub
 
   Private Function CreateSummary(documentPath As String) As DocumentSummary
