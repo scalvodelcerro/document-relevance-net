@@ -17,7 +17,7 @@ Public Module FileUtils
       Try
         Using stream As Stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read Or FileShare.None)
           If stream IsNot Nothing Then
-            Trace.WriteLine(String.Format("Output file {0} ready.", filePath))
+            'Trace.WriteLine(String.Format("Output file {0} ready.", filePath))
             Exit While
           End If
         End Using
