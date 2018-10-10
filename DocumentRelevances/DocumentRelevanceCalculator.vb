@@ -13,6 +13,20 @@ Public Class DocumentRelevanceCalculator
   Public Property Strategy As DocumentRelevanceCalculatorStrategy
 
   ''' <summary>
+  ''' Terms of relevance for calculation
+  ''' </summary>
+  ''' <returns>A enumeration of terms of relevance</returns>
+  Public Property Terms As IEnumerable(Of String)
+    Get
+      Return _terms
+    End Get
+    Set(value As IEnumerable(Of String))
+      _terms = value.AsParallel().Select(Function(t) t.ToLower()).Distinct().ToList()
+    End Set
+  End Property
+  Private _terms As IEnumerable(Of String) = New List(Of String)()
+
+  ''' <summary>
   ''' Fired when the relevance of the processed documents is updated
   ''' </summary>
   Public Event DocumentRelevanceChanged()
@@ -48,7 +62,9 @@ Public Class DocumentRelevanceCalculator
   Public Sub PrintMostRelevantDocuments(limit As Integer)
     Console.WriteLine("--------------------------------------------------")
     Console.WriteLine("Documents processed: {0}", documentRelevances.Count)
-    Console.WriteLine("  Showing top {0} most relevant documents", limit)
+    Console.WriteLine("  Showing top {0} most relevant documents,", limit)
+    Console.WriteLine("  using [{0}] calculation", Strategy.Description)
+    Console.WriteLine("  for the terms [{0}]", String.Join(", ", Terms))
     Console.WriteLine("--------------------------------------------------")
     For Each documentRelevance In documentRelevances.
       OrderByDescending(Function(x) x.Value).
@@ -65,13 +81,16 @@ Public Class DocumentRelevanceCalculator
   End Sub
 
   Private Sub ReadExistingFiles(directoryPath As String)
+    Dim s = Stopwatch.StartNew()
     Directory.EnumerateFiles(directoryPath).AsParallel().
       ForAll(Sub(documentPath) documentSummaries.Add(CreateSummary(documentPath)))
     UpdateDocumentRelevances()
+    s.Stop()
+    Trace.WriteLine(String.Format("Process time: {0}", s.Elapsed))
   End Sub
 
   Private Sub UpdateDocumentRelevances()
-    documentRelevances = Strategy.CalculateDocumentsRelevance(documentSummaries)
+    documentRelevances = Strategy.CalculateDocumentsRelevance(documentSummaries, Terms)
     RaiseEvent DocumentRelevanceChanged()
   End Sub
 

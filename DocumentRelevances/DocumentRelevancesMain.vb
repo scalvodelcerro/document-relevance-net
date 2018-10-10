@@ -18,6 +18,8 @@ Module DocumentRelevancesMain
     Public Property Terms As IEnumerable(Of String)
     <[Option]("n"c, "topN", Required:=True, HelpText:="Top n results to be returned")>
     Public Property ResultsLimit As Integer
+    <[Option]("s"c, "strategy", HelpText:="Strategy used for relevance calculation")>
+    Public Property Strategy As String = "tfidf"
   End Class
 
   ''' <summary>
@@ -37,9 +39,14 @@ Module DocumentRelevancesMain
 
   Private Sub RunProgram(o As Options)
     resultsLimit = o.ResultsLimit
-    Calculator = New DocumentRelevanceCalculator() With {
-      .Strategy = New TfIdfRelevanceStrategy(o.Terms)
-    }
+    Calculator = New DocumentRelevanceCalculator()
+    Select Case o.Strategy.ToLower()
+      Case "tfidf"
+        Calculator.Strategy = New TfIdfRelevanceStrategy()
+      Case "tf"
+        Calculator.Strategy = New TermFrequencyRelevanceStrategy()
+    End Select
+    Calculator.Terms = o.Terms
     Calculator.StartWatchingDirectory(o.Directory)
   End Sub
 

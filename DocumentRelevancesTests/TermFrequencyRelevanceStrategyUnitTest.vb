@@ -6,7 +6,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
   <TestMethod()> Public Sub GivenNoTermsReturnZeroRelevanceForDocuments()
     Dim terms As IEnumerable(Of String) = {}
-    Dim tested = New TermFrequencyRelevanceStrategy(terms)
+    Dim tested = New TermFrequencyRelevanceStrategy()
     Dim documentSummaries = New List(Of DocumentSummary) From {
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 3},
@@ -14,14 +14,14 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       })
     }
 
-    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries, terms)
 
     Assert.AreEqual(0.0, result("doc1"))
   End Sub
 
   <TestMethod()> Public Sub GivenDocumentDoesNotContainTermReturnZeroRelevanceForDocument()
     Dim terms As IEnumerable(Of String) = {"aaa"}
-    Dim tested = New TermFrequencyRelevanceStrategy(terms)
+    Dim tested = New TermFrequencyRelevanceStrategy()
     Dim documentSummaries = New List(Of DocumentSummary) From {
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 3},
@@ -33,7 +33,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       })
     }
 
-    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries, terms)
 
     Assert.AreNotEqual(0.0, result("doc1"))
     Assert.AreEqual(0.0, result("doc2"))
@@ -41,7 +41,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
   <TestMethod()> Public Sub GivenDocumentsWithSameFrequencyReturnSameRelevanceForDocuments()
     Dim terms As IEnumerable(Of String) = {"aaa", "bbb"}
-    Dim tested = New TermFrequencyRelevanceStrategy(terms)
+    Dim tested = New TermFrequencyRelevanceStrategy()
     Dim documentSummaries = New List(Of DocumentSummary) From {
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 3},
@@ -53,14 +53,14 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       })
     }
 
-    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries, terms)
 
     Assert.IsTrue(result("doc1") = result("doc2"))
   End Sub
 
   <TestMethod()> Public Sub GivenDocumentsWithMoreFrequencyReturnMoreRelevanceForDocument()
     Dim terms As IEnumerable(Of String) = {"aaa", "bbb"}
-    Dim tested = New TermFrequencyRelevanceStrategy(terms)
+    Dim tested = New TermFrequencyRelevanceStrategy()
     Dim documentSummaries = New List(Of DocumentSummary) From {
       New DocumentSummary("doc1", New Dictionary(Of String, Integer)() From {
         {"aaa", 5},
@@ -72,7 +72,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
       })
     }
 
-    Dim result = tested.CalculateDocumentsRelevance(documentSummaries)
+    Dim result = tested.CalculateDocumentsRelevance(documentSummaries, terms)
 
     Assert.IsTrue(result("doc1") > result("doc2"))
   End Sub

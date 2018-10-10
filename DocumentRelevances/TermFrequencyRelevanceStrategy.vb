@@ -3,17 +3,15 @@
 Public Class TermFrequencyRelevanceStrategy
   Inherits DocumentRelevanceCalculatorStrategy
 
-  Protected terms As IEnumerable(Of String)
+  Public Overrides ReadOnly Property Description As String
+    Get
+      Return "Term Frequency"
+    End Get
+  End Property
 
-  ''' <summary>
-  ''' Constructor
-  ''' </summary>
-  ''' <param name="terms">Collection of terms of importance</param>
-  Public Sub New(terms As IEnumerable(Of String))
-    Me.terms = terms.Select(Function(term) term.ToLower()).Distinct().ToList()
-  End Sub
-
-  Public Overrides Function CalculateDocumentsRelevance(documentSummaries As List(Of DocumentSummary)) As Dictionary(Of String, Double)
+  Public Overrides Function CalculateDocumentsRelevance(
+                              documentSummaries As List(Of DocumentSummary),
+                              terms As IEnumerable(Of String)) As Dictionary(Of String, Double)
     Dim documentRelevances = documentSummaries.ToDictionary(Function(documentSummary) documentSummary.DocumentName, Function(documentSummary) 0.0)
     For Each term As String In terms
       CType(documentSummaries.AsParallel(), ParallelQuery(Of DocumentSummary)).
